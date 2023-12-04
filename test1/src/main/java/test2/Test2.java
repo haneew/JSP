@@ -15,6 +15,11 @@ public class Test2 extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
 
+	
+	@Override
+	protected void service(HttpServletRequest req, HttpServletResponse resp) 
+			throws ServletException, IOException {
+	}
 	@Override
 	protected void doGet(HttpServletRequest requset, HttpServletResponse response)
 				throws ServletException, IOException{
