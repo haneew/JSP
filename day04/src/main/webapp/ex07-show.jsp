@@ -15,7 +15,7 @@
 <img src="<%=((MemberDTO)request.getAttribute("dto")).getImgPath() %>" height="150">
 
 <img src="${requestScope.dto.imgPath }" height="150">
-
+<%-- El Tag 사용하면 다운캐스팅을 하지 않아도 된다. --%>
 <img src="${dto.imgPath }"height="150">
 
 <h3>이름 : ${dto.name }</h3>

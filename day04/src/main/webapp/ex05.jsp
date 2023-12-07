@@ -55,11 +55,11 @@
 		</div>
 		<div class="right">
 			<%
-				String name = request.getParameter("name");
+				String name = request.getParameter("name"); 				// 파라미터로 요청받은 name의 값이 문자열 name이다.
 			
-				if(name != null) {
-					name = URLEncoder.encode(name, "UTF-8");
-					response.sendRedirect("ex05-show.jsp?name=" + name);
+				if(name != null) {											// 만약 name 이 null이 아니면 
+					name = URLEncoder.encode(name, "UTF-8");				// 이름을 UTF-8로 인코더를 하고	
+					response.sendRedirect("ex05-show.jsp?name=" + name); 	// 답변을 ex05-show.jsp의 name을 돌려준다.
 				}
 			%>
 		</div>

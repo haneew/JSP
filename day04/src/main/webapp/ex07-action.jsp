@@ -13,9 +13,9 @@
 
 	String name = request.getParameter("name");
 
-	if(name == null) {
-		// 이름이 전달되지 않았으면 입력 페이지로 리다이렉트( 넘길 값이 없다)
-		response.sendRedirect("ex07.jsp");
+	if(name == null) { 
+		// 이름이 전달되지 않았으면 입력 페이지로 리다이렉트(넘길 값이 없다)
+		response.sendRedirect("ex07.jsp"); 
 	}
 	else {
 		// 이름이 전달되었으면 객체를 생성하고 request에 객체를 담아둔다

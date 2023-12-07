@@ -13,6 +13,9 @@ public class MemberDTO {
 	public void setName(String name) {
 		this.name = name;
 		this.imgPath = "image/짱구/" + name + ".png";		// image -> prefix         png -> suffix
+		// 원래 기본생성자에 오버라이딩 형식으로 name과 imgPath를 지정하려 했지만
+		// JSP:useBean을 사용하게 되어서 setName 함수 안에 끼워넣었다.
+		
 	}
 	public String getImgPath() {
 		return imgPath;
