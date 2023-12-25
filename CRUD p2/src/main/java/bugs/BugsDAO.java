@@ -9,7 +9,6 @@ import java.util.List;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import javax.sql.DataSource;
 
 public class BugsDAO {
@@ -86,7 +85,7 @@ public class BugsDAO {
 	}
 	public BugsDTO selectOne(int id) {
 		BugsDTO dto = null;
-		String sql = "select * from bugs where id =?";
+		String sql = "select * from bugs where id = ?";
 		try {
 			conn = ds.getConnection();
 			pstmt = conn.prepareStatement(sql);
@@ -180,39 +179,7 @@ public class BugsDAO {
 		return row;
 	}
 	
-	public int update(BugsDTO dto) {
-		int row = 0;
-		String sql =  "update bugs"
-				+ "		set"
-				+ "			artist_name = ?,"
-				+ "			album_name = ?,"
-				+ "			name = ?,"
-				+ "			genre = ?,"
-				+ "			playTime = ?,"
-				+ "			isTitle = ?,"
-				+ "			lyrics = ?"
-				+ "		where"
-				+ "			id = ?";
-		try {
-			conn = ds.getConnection();
-			pstmt = conn.prepareStatement(sql);
-			pstmt.setString(1, dto.getArtist_name());
-			pstmt.setString(2, dto.getAlbum_name());
-			pstmt.setString(3, dto.getName());
-			pstmt.setString(4, dto.getGenre());
-			pstmt.setInt(5, dto.getPlayTime());
-			pstmt.setInt(6, dto.getIsTitle());
-			pstmt.setString(7, dto.getLyrics());
-			pstmt.setInt(8, dto.getId());
-			row = pstmt.executeUpdate();
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			close();
-		}
-		return row;
-	}
-	
+
 	
 	
 	

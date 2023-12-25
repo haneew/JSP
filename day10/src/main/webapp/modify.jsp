@@ -6,7 +6,7 @@
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
-</head>XX
+</head>
 <body>
 
 <h1>수정 : ${param.id }</h1>

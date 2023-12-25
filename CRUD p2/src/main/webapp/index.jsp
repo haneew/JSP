@@ -1,6 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-    <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
     <%@ include file="header.jsp" %>
 
 
@@ -29,10 +28,10 @@
 			</tr>
 		</thead>
 		<tbody>
-			<jsp:useBean id="dao" class="bugs.BugsDAO" />
+			
 			<c:set var="list" value="${dao.selectAll(param.search) }"  />
-			<c:forEach var="dto" items="${listw }" >
-				<tr bgcolor="${dto.isTitle == 1 ? 'lightpink' : 'white' } }">
+			<c:forEach var="dto" items="${list }" >
+				<tr bgcolor="${dto.isTitle == 1 ? 'lightpink' : 'white' }">
 					<td>${dto.id }</td>
 					<td><img src="artist_img/${dto.artist_img }" height="50">${dto.artist_name }</td>
 					<td><img src="album_img/${dto.album_img }" height="50">${dto.album_name }</td>
@@ -40,7 +39,7 @@
 					<td>${dto.playTime }</td>
 					<td>
 						<a href="view.jsp?id=${dto.id }"><button>상세보기</button></a>
-						<a href="modify.jsp?id=${dto.id }"><button>조회</button></a>
+						<a href="modify.jsp?id=${dto.id }"><button>수정</button></a>
 						<button class="deleteBtn" itemId="${dto.id }">삭제</button>
 					</td>
 				</tr>

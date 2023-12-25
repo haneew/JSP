@@ -4,7 +4,7 @@
 
 
 <section>
-	<c:set var="dto" value="${dto.selectOne(param.id }" />
+	<c:set var="dto" value="${dao.selectOne(param.id) }" />
 	<div class="view">
 		<div>
 			<img alt="" src="album_img/${dto.album_img }" height="200">
