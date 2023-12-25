@@ -2,7 +2,7 @@
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
-<html>
+<html lang="ko">
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
@@ -15,8 +15,6 @@
 <h3>${dto.name }</h3>
 <h3>${dto.artist_name }</h3>
 <pre>${dto.lyrics }</pre>
-
-
 
 </body>
 </html>

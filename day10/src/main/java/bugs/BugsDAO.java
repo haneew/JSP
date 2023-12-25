@@ -11,9 +11,7 @@ import java.util.List;
 
 public class BugsDAO {
 	// 싱글톤
-	// 멤버필드
-
-	
+	// 멤버 필드
 	private String url = "jdbc:oracle:thin:@192.168.1.100:1521:xe";
 	private String user = "c##itbank";
 	private String password = "it";
@@ -24,22 +22,24 @@ public class BugsDAO {
 	
 	// 생성자
 	
-	// 내부함수
 	
+	// 내부 함수
+	// Connection getConnection()
 	private Connection getConnection() throws Exception {
 		Class.forName("oracle.jdbc.driver.OracleDriver");
 		return DriverManager.getConnection(url, user, password);
 	}
-	// void close
-	public void close() {
+	
+	// void close()
+	private void close() {
 		try {
-			if(rs != null) rs.close();
-			if(pstmt != null) pstmt.close();
-			if(conn != null) conn.close();
-			} catch (Exception e) {
-		}
+			if(rs != null) 		rs.close();
+			if(pstmt != null) 	pstmt.close();
+			if(conn != null) 	conn.close();
+		} catch(SQLException e) {}
 	}
-	// BugsDTO mapping(ResultSet rs) 
+	
+	// BugsDTO mapping(ResultSet rs)
 	private BugsDTO mapping(ResultSet rs) throws SQLException {
 		BugsDTO dto = new BugsDTO();
 		dto.setId(rs.getInt("id"));
@@ -54,17 +54,18 @@ public class BugsDAO {
 		dto.setIsTitle(rs.getInt("isTitle"));
 		return dto;
 	}
-	// 공개 함수
 	
-
+	// 공개 함수
+	// List<BugsDTO> selectAll()
+	// select * from bugs order by artist_name, id
 	public List<BugsDTO> selectAll(String search) {
 		ArrayList<BugsDTO> list = new ArrayList<>();
-		String sql = "select * from bugs "
-						+ " where"
-						+ "     	name like '%' || ? || '%' "
-						+ " 		or"
-						+ " 		artist_name like '%'|| ? ||'%'"
-						+ " order by artist_name, id";
+		String sql = "select * from bugs"
+				+ "	where"
+				+ "		name like '%' || ? || '%'"
+				+ "		or"
+				+ "		artist_name like '%' || ? || '%'"
+				+ " order by artist_name, id";
 		try {
 			conn = getConnection();
 			pstmt = conn.prepareStatement(sql);
@@ -76,20 +77,18 @@ public class BugsDAO {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-		} finally {close();}
-		System.out.println(list.size());
+		} finally { close(); }
+//		System.out.println("불러온 목록의 개수 : " + list.size());
 		return list;
 	}
 	
 	// List<BugsDTO> selectListBySearch(String search)
-	
-	// select * from bugs where
-	//			name like '%' || ? || '%'
-	// 			or artist_name like '%' || ? || '%'
+	// select * from bugs where 
+	//		name like '%' || ? || '%"
+	//		or artist_name like '%' || ? || '%'
 	
 	// BugsDTO selectOne(int id)
 	// select * from bugs where id = ?
-	
 	public BugsDTO selectOne(int id) {
 		BugsDTO dto = null;
 		String sql = "select * from bugs where id = ?";
@@ -103,18 +102,16 @@ public class BugsDAO {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-		} finally {close();}
+		} finally { close(); }
 		return dto;
 	}
 	
-	
-	
-	// insert(bugsDTO dto)
+	// int insert(BugsDTO dto)
 	// insert into bugs (...) values (?, ...)
 	
-	
-	// int update(Bugs dto)
+	// int update(BugsDTO dto)
 	// update bugs set artist_name=?, ... where id = ?
+	
 	public int update(BugsDTO dto) {
 		int row = 0;
 		String sql = "update bugs"
@@ -127,7 +124,7 @@ public class BugsDAO {
 				+ "			isTitle = ?,"
 				+ "			lyrics = ?"
 				+ "		where"
-				+ "			id = ? ";
+				+ "			id = ?";
 		try {
 			conn = getConnection();
 			pstmt = conn.prepareStatement(sql);
@@ -148,5 +145,16 @@ public class BugsDAO {
 	
 	// int delete(int id)
 	// delete from bugs where id = ?
-	
 }
+
+
+
+
+
+
+
+
+
+
+
+

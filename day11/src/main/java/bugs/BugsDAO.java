@@ -1,5 +1,6 @@
 package bugs;
 
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -14,46 +15,45 @@ import javax.sql.DataSource;
 
 public class BugsDAO {
 	
-	// 싱글톤 (DAO 객체가 여러개 있을 필요가 없다)
-	// 외부에서 DAO의 객체를 함부로 생성할 수 없도록 생성자의 접근제한자를 private으로 수정해야 한다
+	// 싱글톤 (DAO객체가 여러개 있을 필요가 없다)
+	// 외부에서 DAO의 객체를 함부로 생성할 수 없도록 생성자의 접근제한자를 private로 수정해야 한다.
+	
 	private static BugsDAO instance = new BugsDAO();
 	public static BugsDAO getInstance() {
 		return instance;
 	}
-
+	
 	private Connection conn;
 	private PreparedStatement pstmt;
 	private ResultSet rs;
 	
-	private Context init;	// context.xml 에서 작성한 내용대로의 객체를 포함하는 컨테이너 
+	private Context init;	// context.xml 에서 작성한 내용대로의 객체를 포함하는 컨테이너
 	private DataSource ds;	// 여러 커넥션을 관리하는 DataSource 객체
 	// 커넥션풀 : 요청이 들어올때 마다 새로운 커넥션을 생성하지 말고
-	// 			미리 충분히 사용할만큼의 커넥션을 생성해두고, 돌려가면서 사용하기 위해서
+	//			미리 충분히 사용할만큼의 커넥션을 생성해두고, 돌려가면서 사용하기 위해서
+
 	
-//	public BugsDAO() {
-	private BugsDAO() {
+	
+	public BugsDAO() {
 		try {
 			init = new InitialContext();
 			ds = (DataSource) init.lookup("java:comp/env/jdbc/oracle");
 			
 		} catch (NamingException e) {
-			System.out.println("지정한 이름의 객체를 찾을 수 없습니다 : " + e);
+			System.out.println("지정한 이름의 객체를 팢을 수 없습니다 : " +  e);
 		} finally {
-			if(conn != null) try { conn.close(); } catch(SQLException e) {}
+			if(conn != null ) try { conn.close(); } catch(SQLException e) {}
 		}
 	}
-
-	// 내부 함수
-	// void close()
-	private void close() {
+	
+	public void close() {
 		try {
-			if(rs != null) 		rs.close();
-			if(pstmt != null) 	pstmt.close();
-			if(conn != null) 	conn.close();
-		} catch(SQLException e) {}
+			if(rs != null) rs.close();
+			if(pstmt != null) pstmt.close();
+			if(conn != null) conn.close();
+			} catch (Exception e) {
+		}
 	}
-
-	// BugsDTO mapping(ResultSet rs)
 	private BugsDTO mapping(ResultSet rs) throws SQLException {
 		BugsDTO dto = new BugsDTO();
 		dto.setId(rs.getInt("id"));
@@ -68,16 +68,15 @@ public class BugsDAO {
 		dto.setIsTitle(rs.getInt("isTitle"));
 		return dto;
 	}
-
-	// 공개 함수
+	
 	public List<BugsDTO> selectAll(String search) {
 		ArrayList<BugsDTO> list = new ArrayList<>();
-		String sql = "select * from bugs"
-				+ "	where"
-				+ "		name like '%' || ? || '%'"
-				+ "		or"
-				+ "		artist_name like '%' || ? || '%'"
-				+ " order by artist_name, id";
+		String sql = "select * from bugs "
+						+ " where"
+						+ "     	name like '%' || ? || '%' "
+						+ " 		or"
+						+ " 		artist_name like '%'|| ? ||'%'"
+						+ " order by artist_name, id";
 		try {
 			conn = ds.getConnection();
 			pstmt = conn.prepareStatement(sql);
@@ -87,22 +86,119 @@ public class BugsDAO {
 			while(rs.next()) {
 				list.add(mapping(rs));
 			}
-			// 검색어 표시 추가코드
-			if("".equals(search) == false) {
-				for(BugsDTO ob : list) {
-					String prefix = "<span class=\"search\">";
-					String suffix = "</span>";
-					String rep = ob.getArtist_name().replace(search, prefix + search + suffix);
-					ob.setArtist_name(rep);
-					String rep2 = ob.getName().replace(search, prefix + search + suffix);
-					ob.setName(rep2);
-				}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {close();}
+		System.out.println(list.size());
+		return list;
+	}
+	// 조회
+	public BugsDTO selectOne(int id) {
+		BugsDTO dto = null;
+		String sql = "select * from bugs where id = ?";
+		try {
+			conn = ds.getConnection();
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setInt(1, id);
+			rs = pstmt.executeQuery();
+			while(rs.next()) {
+				dto = mapping(rs);	// 하나 가져와서
+				return dto;			// 곧바로 반환한다
 			}
-			
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally { close(); }
-//		System.out.println("불러온 목록의 개수 : " + list.size());
-		return list;
+		return dto;
 	}
+	// while문에서 return(함수종료)이 되었지만 finally는 작동한다
+	
+	public int insert(BugsDTO dto) {
+		int row = 0;
+		String sql = "insert into bugs ("
+					+ " 		artist_name,"
+					+ " 		album_name,"
+					+ " 		name,"
+					+ " 		genre,"
+					+ " 		playTime,"
+					+ " 		isTitle,"
+					+ " 		lyrics "
+					+ "	) values ( "
+					+ "		?, ?, ?, ?, ?, ?, ? "	
+					+ " )";
+			
+		try {
+			conn = ds.getConnection();
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, dto.getArtist_name());
+			pstmt.setString(2, dto.getAlbum_name());
+			pstmt.setString(3, dto.getName());
+			pstmt.setString(4, dto.getGenre());
+			pstmt.setInt(5, dto.getPlayTime());
+			pstmt.setInt(6, dto.getIsTitle());
+			pstmt.setString(7, dto.getLyrics());
+			row = pstmt.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally { close(); } 
+		return row;
+	}
+	
+	
+	// 삭제
+	
+	public int delete(int id) {
+		int row = 0;
+		String sql = "delete from bugs where id = ?";
+		// sql이 select이면 excuteQuery() --- ReserltSet반환
+		// sql이 insert/delete/update 이면 executeUpdate --- int 반환
+		try {
+			conn = ds.getConnection();
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setInt(1, id);
+			row = pstmt.executeUpdate();
+		} catch (Exception e) { 
+			e.printStackTrace();
+		} finally { close(); }
+		return row;
+	
+	}
+	
+	// 수정
+	public int update(BugsDTO dto) {
+		int row = 0;
+		String sql  = "update bugs"
+				+ "		set"
+				+ "			artist_name = ?,"
+				+ "			album_name = ?,"
+				+ "			name = ?,"
+				+ "			genre = ?,"
+				+ "			playTime = ?,"
+				+ "			isTitle = ?,"
+				+ "			lyrics = ?"
+				+ "		where"
+				+ "			id = ?";
+		try {
+			conn = ds.getConnection();
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, dto.getArtist_name());
+			pstmt.setString(2, dto.getAlbum_name());
+			pstmt.setString(3, dto.getName());
+			pstmt.setString(4, dto.getGenre());
+			pstmt.setInt(5, dto.getPlayTime());
+			pstmt.setInt(6, dto.getIsTitle());
+			pstmt.setString(7, dto.getLyrics());
+			pstmt.setInt(8, dto.getId());
+			row = pstmt.executeUpdate();
+		} catch (Exception e) { 
+			e.printStackTrace();
+		} finally { close(); }
+		return row;
+	}
+	
+	
+//	맨날 반복적인 작업을 수행하는 것보다는 사용할 대역폭을 준비해뒀다가 리싸이클로 제공한다. 
+	
+	
+	
+	
 }
